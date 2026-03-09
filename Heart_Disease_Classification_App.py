@@ -29,6 +29,40 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
+# Patient input section
+st.header("Patient Information")
+
+age = st.slider("Age", 20, 80, 50)
+sex = st.selectbox("Sex (0 = Female, 1 = Male)", [0,1])
+cp = st.slider("Chest Pain Type", 0, 3, 1)
+trestbps = st.slider("Resting Blood Pressure", 80, 200, 120)
+chol = st.slider("Cholesterol", 100, 400, 200)
+fbs = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0,1])
+restecg = st.slider("Resting ECG", 0, 2, 1)
+thalach = st.slider("Max Heart Rate", 70, 210, 150)
+exang = st.selectbox("Exercise Induced Angina", [0,1])
+oldpeak = st.slider("ST Depression", 0.0, 6.0, 1.0)
+slope = st.slider("Slope of ST Segment", 0, 2, 1)
+ca = st.slider("Number of Major Vessels", 0, 4, 0)
+thal = st.slider("Thalassemia", 0, 3, 1)
+
+features = np.array([[age, sex, cp, trestbps, chol, fbs, restecg,
+                      thalach, exang, oldpeak, slope, ca, thal]])
+
+# Prediction
+if st.button("Predict Heart Disease Risk"):
+
+    prediction = model.predict(features)
+
+    if prediction[0] == 1:
+        st.error("High Risk of Heart Disease")
+    else:
+        st.success("Low Risk of Heart Disease")
+
+# Dataset preview
+st.subheader("Dataset Preview")
+st.dataframe(data.head())
+
 # Train models only once using @st.cache_resource
 @st.cache_resource
 def train_models(X_train, y_train):
@@ -105,42 +139,9 @@ ax2.set_xticklabels(comparison_df["Model"], rotation=45)
 
 st.pyplot(fig2)
 
-# Patient input section
-st.header("Patient Information")
-
-age = st.slider("Age", 20, 80, 50)
-sex = st.selectbox("Sex (0 = Female, 1 = Male)", [0,1])
-cp = st.slider("Chest Pain Type", 0, 3, 1)
-trestbps = st.slider("Resting Blood Pressure", 80, 200, 120)
-chol = st.slider("Cholesterol", 100, 400, 200)
-fbs = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0,1])
-restecg = st.slider("Resting ECG", 0, 2, 1)
-thalach = st.slider("Max Heart Rate", 70, 210, 150)
-exang = st.selectbox("Exercise Induced Angina", [0,1])
-oldpeak = st.slider("ST Depression", 0.0, 6.0, 1.0)
-slope = st.slider("Slope of ST Segment", 0, 2, 1)
-ca = st.slider("Number of Major Vessels", 0, 4, 0)
-thal = st.slider("Thalassemia", 0, 3, 1)
-
-features = np.array([[age, sex, cp, trestbps, chol, fbs, restecg,
-                      thalach, exang, oldpeak, slope, ca, thal]])
-
-# Prediction
-if st.button("Predict Heart Disease Risk"):
-
-    prediction = model.predict(features)
-
-    if prediction[0] == 1:
-        st.error("High Risk of Heart Disease")
-    else:
-        st.success("Low Risk of Heart Disease")
-
-# Dataset preview
-st.subheader("Dataset Preview")
-st.dataframe(data.head())
-
 # ROC curve : shows the trade-off between True Positive Rate (TPR = How many SICK patients did we catch?)
 # and False Positive Rate (FPR = How many patients did we scare?); 0 = no heart disease, 1 = heart disease.
+
 st.subheader("ROC Curve Comparison")
 
 fig3, ax3 = plt.subplots()
